@@ -1,25 +1,31 @@
+// Import necessary libraries or modules
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 async function start() {
-    try {
+  const network = process.env.SOLANA_NETWORK || 'mainnet';
+  let rpcUrl;
 
-const publicKey = new PublicKey("33avGkWoYrdD7f8N788tt5tv8716h6XpZUygdDPDWMk6");
+  if (network === 'mainnet') {
+    rpcUrl = 'https://api.mainnet-beta.solana.com';
+  } else if (network === 'devnet') {
+    rpcUrl = 'https://api.devnet.solana.com';
+  } else {
+    console.error('Invalid network specified. Use "mainnet" or "devnet".');
+    return;
+  }
 
-const connection = new Connection("https://api.devnet.solana.com", "confirmed");
-
-const balanceInLamports = await connection.getBalance(publicKey);
-
-const balanceInSOL = balanceInLamports / LAMPORTS_PER_SOL;
-
-console.log(
-  `💰 Finished! The balance for the wallet at address ${publicKey} is ${balanceInSOL}!`
-);
-
+  // Connect to the Solana network
+  const connection = new Connection(rpcUrl, 'confirmed');
+  
+  // Example: Get balance from the connected network
+  try {
+    const address = new PublicKey('GgJJRwLg9NzFQ97o1CJLGLp1KLSUMBwFc6eQNVEr4fbW');
+    const balance = await connection.getBalance(address);
+    console.log(`Balance on ${network}:`, balance);
+  } catch (error) {
+    console.error('Error getting balance:', error);
+  }
 }
-catch (error) {
-    console.error("Error:", error);
-}
-}
 
-
+// Call the start function
 start();
